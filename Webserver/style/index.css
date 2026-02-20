@@ -1,0 +1,50 @@
+body{
+    background-color: grey;
+}
+
+h1{
+    text-align: center;
+    color: #01352c;
+    font-family: cursive;
+
+}
+
+h2{
+    color: #01352c;
+    font-family: cursive;
+}
+
+.jeep_img{
+    display: block;
+    margin-left: auto;
+    margin-right: 8%;
+    margin-bottom: 8%;
+    width: 25%;
+}
+.stefan_img{
+    display: block;
+    margin-left: auto;
+    margin-right: 8%;
+    margin-bottom: 8%;
+    width: 25%;
+}
+
+hr{
+    color:#61b390;
+}
+
+p{
+    color:#01352c; 
+    font-family: cursive;
+}
+
+ul{
+    color:#01352c; 
+    font-family: cursive;
+}
+
+
+
+test{
+color: FFC0CB;
+}
