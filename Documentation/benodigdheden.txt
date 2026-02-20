@@ -1,0 +1,51 @@
+TX side ✔️
+	-> digirig ✔️
+	-> cables ✔️
+	-> direwolf software ✔️
+
+RX side
+	-> Usb-c cables
+	-> VHF antenna
+	-> RTL SDR
+	
+SERVER 
+	- Host OS (stable release) ✔️
+	- 3VM (ubuntu servers) ✔️
+	- proxmox ✔️
+
+
+DNS ✔️
+carradio-monitor.com ✔️
+tunnel naar DMZ zone waar server staat  ✔️
+
+
+VM1
+	--> gateway/security ✔️
+	--> (stuurt gebruiker naar de juiste ) ✔️
+	--> start nieuwe vm als 2/3 uitvalt
+	
+VM2
+	--> input van SDR
+	--> backend/frontend website
+	--> API
+	
+VM3
+	--> Database (mysql), (phpmyadmin)
+	--> bashscripts dat database optimaliseerd
+
+
+
+WEBPAGINA
+
+--> kaart met locatie voertuig
+--> huidige data (weer , locatie , status , callsign)
+--> gebruiker kan bepaalde historische data opvragen (python backend , sql)
+--> pagina van huidige status van voertuig en geschiedenis van noodstatussen
+--> (HTTPS certifaact veilige inlog pagina , hashing)
+
+
+Noodstatus
+
+	--> Telegram melding!
+	--> aangepaste webpagina opmaak
+	
