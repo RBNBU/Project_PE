@@ -1,0 +1,19 @@
+WAT IN DATABASE ?
++++++++++++++++++++++++++++++++++++++++++++++++
+
+	DOOR APRS
+-----------------------------------------------
+	--> Timestamp 
+	--> Location
+	--> Altidute
+	--> Speed
+	--> Course (omvormen naar windrichting)
+
+	DOOR API
+-----------------------------------------------
+	--> Temperature
+	--> Neerslag
+	--> Bewolking
+	--> Wind
+	--> Luchtvochtigheid (?)
+	
