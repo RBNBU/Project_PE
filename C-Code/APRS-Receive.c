@@ -81,21 +81,21 @@ void loadCallsigns()
     //insert CSV file into array
     if(fgets(buffer, sizeof(buffer), fptr))
     {
-        buffer[strcspn(buffer, "\r\n")] = 0; //removes \r and \n at the end of the file
-        current_callsign = strtok(buffer, ";"); //remove separator: ";"
+        buffer[strcspn(buffer, "\r\n")] = 0; // removes \r and \n at the end of the file
+        current_callsign = strtok(buffer, ";"); // remove separator: ";"
 
         while((current_callsign != NULL) && (callsignCount < MAX_CALLSIGNS))
         {
-            strncpy(allowedCallsigns[callsignCount], current_callsign, CALLSIGN_LEN - 1); //copy callsign into array
+            strncpy(allowedCallsigns[callsignCount], current_callsign, CALLSIGN_LEN - 1); // copy callsign into array
             callsignCount++;
-            current_callsign = strtok(NULL, ";"); //remove separator: ";"
+            current_callsign = strtok(NULL, ";"); // remove separator: ";"
         }
     }
 
-    //close file
+    // close file
     fclose(fptr);
 
-    //realloc the array
+    // realloc the array
     if(callsignCount > 0)
     {
         temp = realloc(allowedCallsigns, callsignCount * sizeof(char) * CALLSIGN_LEN);
@@ -105,10 +105,10 @@ void loadCallsigns()
             allowedCallsigns = temp;
         }
     }
-    else //no callsigns present in file, free all
+    else // no callsigns present in file, free all
     {
         free(allowedCallsigns);
-        //callsignCount will stay 0
+        // callsignCount will stay 0
         fprintf(stderr, "Error while realloc allowedCallsigns!");
     }
 }
@@ -123,11 +123,11 @@ allowedFilter: allowed callsign to compare with
 {
     int checkForLen;
     
-    checkForLen = strlen(allowedFilter); //only check for the length of the filter
+    checkForLen = strlen(allowedFilter); // only check for the length of the filter
     
     if(strncmp(incoming, allowedFilter, checkForLen) == 0)
     {
-        if((incoming[checkForLen] == 0) || (incoming[checkForLen] == '-')) //if callsign ends or SSID begins (-9, -10, ...)
+        if((incoming[checkForLen] == 0) || (incoming[checkForLen] == '-')) // if callsign ends or SSID begins (-9, -10, ...)
         {
             return 1;
         }
@@ -144,27 +144,27 @@ obj: user data pointer
 message: pointer to MQTT message
 */
 {
-    if (message->payloadlen == 0) //if message is empty
+    if (message->payloadlen == 0) // if message is empty
     return;
     
     
     cJSON *json, *source;
     int matchFound = 0, i;
     
-    json = cJSON_Parse((char*)message->payload); //parse mqtt message
+    json = cJSON_Parse((char*)message->payload); // parse mqtt message
     if(json == NULL)
     {
         fprintf(stderr, "Error while parsing JSON!");
         return;
     }
     
-    source = cJSON_GetObjectItemCaseSensitive(json, "source"); //source field, who sent the message
+    source = cJSON_GetObjectItemCaseSensitive(json, "source"); // source field, who sent the message
     
-    if(cJSON_IsString(source) && (source->valuestring != NULL)) //if source is string and it is not empty
+    if(cJSON_IsString(source) && (source->valuestring != NULL)) // if source is string and it is not empty
     {
         for (i = 0; i < callsignCount; i++)
         {
-            if(matchCallsign(source->valuestring, allowedCallsigns[i])) //look for callsign in list of allowed callsigns
+            if(matchCallsign(source->valuestring, allowedCallsigns[i])) // look for callsign in list of allowed callsigns
             {
                 matchFound = 1;
                 break;
@@ -178,7 +178,7 @@ message: pointer to MQTT message
         }
     }
     
-    cJSON_Delete(json); //also automatically deletes "source"
+    cJSON_Delete(json); // also automatically deletes "source"
 }
 
 /*-------------------------------------------------------------------------------*/
