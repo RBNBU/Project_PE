@@ -49,8 +49,8 @@ int callsignCount = 0;
 // Function declarations
 void loadCallsigns(); // Function used to load callsings from text file
 int matchCallsign(const char *incoming, const char *allowedFilter); // Check if callsign matches to an allowed one
-void on_MQTT_Message(struct mosquitto *p_mosq, void *obj, const struct mosquitto_message *p_message); //When a MQTT message arrives
-void on_MQTT_Connect(struct mosquitto *p_mosq, void *obj, int rc);
+void on_MQTT_Message(struct mosquitto *p_mosq, void *obj, const struct mosquitto_message *p_message); // When a MQTT message arrives
+void on_MQTT_Connect(struct mosquitto *p_mosq, void *obj, int rc); // On MQTT broker connect
 
 /*-------------------------------------------------------------------------------*/
 
