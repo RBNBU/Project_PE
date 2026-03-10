@@ -1,50 +1,50 @@
-//Default libraries
+// Default libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-//Custom libraries
+// Custom libraries
 #include <mosquitto.h>
 #include <cjson/cJSON.h>
 
 /*-------------------------------------------------------------------------------*/
 
-//Define constants
-//RTL SDR constants
-#define APRS_FREQ 144800000 //144,800MHz (European APRS Frequency)
-#define SDR_SAMPLE_RATE 2048000 //2.048MSPS (Good for APRS)
-#define CALLSIGN_FILE "./Callsigns.txt" //file with all allowed callsigns ex. "ON0CLL;P4CLL"
+// Define constants
+// RTL SDR constants
+#define APRS_FREQ 144800000 // 144,800MHz (European APRS Frequency)
+#define SDR_SAMPLE_RATE 2048000 // 2.048MSPS (Good for APRS)
+#define CALLSIGN_FILE "./Callsigns.txt" // File with all allowed callsigns ex. "ON0CLL;P4CLL"
 
 
-//MQTT constants
-//Sub / Raw
+// MQTT constants
+// Sub / Raw
 #define MQTT_SUB "localhost"
 #define MQTT_SUB_PORT 1883
 #define MQTT_SUB_TOPIC "RTL_SDR/RAW/APRS"
 #define MQTT_SUB_QOS 2
 
-//Host / Filtered
+// Host / Filtered
 #define MQTT_HOST "localhost"
 #define MQTT_HOST_PORT 1883
 #define MQTT_HOST_TOPIC "RTL_SDR/FILTERED/APRS"
 #define MQTT_HOST_QOS 2
 
 
-//Callsign constants
+// Callsign constants
 #define MAX_CALLSIGNS 100
 #define CALLSIGN_LEN 16
 
 /*-------------------------------------------------------------------------------*/
 
-//Global variables
-char (*allowedCallsigns)[CALLSIGN_LEN]; //Array of allowed callsigns
+// Global variables
+char (*allowedCallsigns)[CALLSIGN_LEN]; // Array of allowed callsigns
 int callsignCount = 0;
 
 /*-------------------------------------------------------------------------------*/
 
-//Function declarations
-void loadCallsigns(); //Function used to load callsings from text file
-int matchCallsign(const char *incoming, const char *allowedFilter); //Check if callsign matches to an allowed one
+// Function declarations
+void loadCallsigns(); // Function used to load callsings from text file
+int matchCallsign(const char *incoming, const char *allowedFilter); // Check if callsign matches to an allowed one
 void on_MQTT_Message(struct mosquitto *p_mosq, void *obj, const struct mosquitto_message *p_message); //When a MQTT message arrives
 void on_MQTT_Connect(struct mosquitto *p_mosq, void *obj, int rc);
 
@@ -52,22 +52,22 @@ void on_MQTT_Connect(struct mosquitto *p_mosq, void *obj, int rc);
 
 int main()
 {
-    // declare variables
+    // Declare variables
     struct mosquitto *mosq = NULL;
     int mosquitto_status;
 
-    // load callsigns into array;
+    // Load callsigns into array;
     loadCallsigns();
-    if (callsignCount == 0) // check for empty callsign file
+    if (callsignCount == 0) // Check for empty callsign file
     {
         fprintf(stderr, "No callsigns found in file!\nFile: %s\n", CALLSIGN_FILE);
         return -1;
     }
 
-    // initialize mosquitto library
+    // Initialize mosquitto library
     mosquitto_lib_init();
 
-    // create new MQTT client
+    // Create new MQTT client
     mosq = mosquitto_new("APRS_Filter_C", false, NULL);
     /*
     station id: APRS_Filter_C
@@ -90,15 +90,15 @@ int main()
         return -1;
     }
 
-    // print startup message
+    // Print startup message
     printf("Filter started!\nMQTT Sub: %s\nQOS: %d\n", MQTT_SUB_TOPIC, MQTT_SUB_QOS);
     printf("Loaded %d callsigns from file!\n", callsignCount);
     printf("\n<------------------------------>\n\n");
 
-    // start infinite loop to scan for messages
-    mosquitto_loop_forever(mosq, -1, 1); // auto-reconnects when needed
+    // Start infinite loop to scan for messages
+    mosquitto_loop_forever(mosq, -1, 1); // Auto-reconnects when needed
 
-    // cleanup code
+    // Cleanup code
     if (allowedCallsigns != 0)
     {
         free(allowedCallsigns);
@@ -114,7 +114,7 @@ int main()
 
 void loadCallsigns()
 {
-    //Declarations
+    // Declarations
     allowedCallsigns = calloc(MAX_CALLSIGNS, sizeof(char) * CALLSIGN_LEN);
     if (!allowedCallsigns)
     {
@@ -131,26 +131,26 @@ void loadCallsigns()
 
     char buffer[2048], *current_callsign, (*temp)[CALLSIGN_LEN];
 
-    //insert CSV file into array
+    // Insert CSV file into array
     if(fgets(buffer, sizeof(buffer), fptr))
     {
-        buffer[strcspn(buffer, "\r\n")] = 0; // removes \r and \n at the end of the file
-        current_callsign = strtok(buffer, ";"); // remove separator: ";"
+        buffer[strcspn(buffer, "\r\n")] = 0; // Removes \r and \n at the end of the file
+        current_callsign = strtok(buffer, ";"); // Remove separator: ";"
 
         while((current_callsign != NULL) && (callsignCount < MAX_CALLSIGNS))
         {
-            strncpy(allowedCallsigns[callsignCount], current_callsign, CALLSIGN_LEN - 1); // copy callsign into array
-            allowedCallsigns[callsignCount][CALLSIGN_LEN - 1] = '\0'; // add null terminator
+            strncpy(allowedCallsigns[callsignCount], current_callsign, CALLSIGN_LEN - 1); // Copy callsign into array
+            allowedCallsigns[callsignCount][CALLSIGN_LEN - 1] = '\0'; // Add null terminator
             
             callsignCount++;
-            current_callsign = strtok(NULL, ";"); // remove separator: ";"
+            current_callsign = strtok(NULL, ";"); // Remove separator: ";"
         }
     }
 
-    // close file
+    // Close file
     fclose(fptr);
 
-    // realloc the array
+    // Realloc the array
     if(callsignCount > 0)
     {
         temp = realloc(allowedCallsigns, callsignCount * sizeof(char) * CALLSIGN_LEN);
@@ -160,10 +160,10 @@ void loadCallsigns()
             allowedCallsigns = temp;
         }
     }
-    else // no callsigns present in file, free all
+    else // No callsigns present in file, free all
     {
         free(allowedCallsigns);
-        // callsignCount will stay 0
+        // CallsignCount will stay 0
         fprintf(stderr, "Error while realloc allowedCallsigns!");
     }
 }
@@ -178,11 +178,11 @@ allowedFilter: allowed callsign to compare with
 {
     int checkForLen;
     
-    checkForLen = strlen(allowedFilter); // only check for the length of the filter
+    checkForLen = strlen(allowedFilter); // Only check for the length of the filter
     
     if(strncmp(incoming, allowedFilter, checkForLen) == 0)
     {
-        if((incoming[checkForLen] == 0) || (incoming[checkForLen] == '-')) // if callsign ends or SSID begins (-9, -10, ...)
+        if((incoming[checkForLen] == 0) || (incoming[checkForLen] == '-')) // If callsign ends or SSID begins (-9, -10, ...)
         {
             return 1;
         }
@@ -199,27 +199,27 @@ obj: user data pointer
 message: pointer to MQTT message
 */
 {
-    if (p_message->payloadlen == 0) // if message is empty
+    if (p_message->payloadlen == 0) // If message is empty
     return;
     
     
     cJSON *json, *source;
     int matchFound = 0, i;
     
-    json = cJSON_Parse((char*)p_message->payload); // parse mqtt message
+    json = cJSON_Parse((char*)p_message->payload); // Parse mqtt message
     if(json == NULL)
     {
         fprintf(stderr, "Error while parsing JSON!");
         return;
     }
     
-    source = cJSON_GetObjectItemCaseSensitive(json, "source"); // source field, who sent the message
+    source = cJSON_GetObjectItemCaseSensitive(json, "source"); // Source field, who sent the message
     
-    if(cJSON_IsString(source) && (source->valuestring != NULL)) // if source is string and it is not empty
+    if(cJSON_IsString(source) && (source->valuestring != NULL)) // If source is string and it is not empty
     {
         for (i = 0; i < callsignCount; i++)
         {
-            if(matchCallsign(source->valuestring, allowedCallsigns[i])) // look for callsign in list of allowed callsigns
+            if(matchCallsign(source->valuestring, allowedCallsigns[i])) // Look for callsign in list of allowed callsigns
             {
                 matchFound = 1;
                 break;
@@ -233,7 +233,7 @@ message: pointer to MQTT message
         }
     }
     
-    cJSON_Delete(json); // also automatically deletes "source"
+    cJSON_Delete(json); // Also automatically deletes "source"
 }
 
 /*-------------------------------------------------------------------------------*/
