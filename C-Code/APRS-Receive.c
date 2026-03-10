@@ -1,3 +1,9 @@
+/*
+Code written by Ruben Buelens ON3RBU
+
+Code in function of Practice Enterprise ICT.
+*/
+
 // Default libraries
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +19,7 @@
 // RTL SDR constants
 #define APRS_FREQ 144800000 // 144,800MHz (European APRS Frequency)
 #define SDR_SAMPLE_RATE 2048000 // 2.048MSPS (Good for APRS)
-#define CALLSIGN_FILE "./Callsigns.txt" // File with all allowed callsigns ex. "ON0CLL;P4CLL"
+#define CALLSIGN_FILE "./Callsigns.txt" // File with all allowed callsigns ex. "ON3RBU;ON0CALL"
 
 
 // MQTT constants
@@ -54,13 +60,12 @@ int main()
 {
     // Declare variables
     struct mosquitto *mosq = NULL;
-    int mosquitto_status;
 
     // Load callsigns into array;
     loadCallsigns();
     if (callsignCount == 0) // Check for empty callsign file
     {
-        fprintf(stderr, "No callsigns found in file!\nFile: %s\n", CALLSIGN_FILE);
+        // Error message is printed in function
         return -1;
     }
 
@@ -126,6 +131,7 @@ void loadCallsigns()
     if (!fptr)
     {
         fprintf(stderr, "Error while opening file: %s", CALLSIGN_FILE) ;
+        free(allowedCallsigns);
         return;
     }
 
@@ -164,7 +170,7 @@ void loadCallsigns()
     {
         free(allowedCallsigns);
         // CallsignCount will stay 0
-        fprintf(stderr, "Error while realloc allowedCallsigns!");
+        fprintf(stderr, "File empty!\nFile: %s\n", CALLSIGN_FILE);
     }
 }
 
