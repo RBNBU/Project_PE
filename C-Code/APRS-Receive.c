@@ -121,14 +121,14 @@ void loadCallsigns()
     allowedCallsigns = calloc(MAX_CALLSIGNS, sizeof(char) * CALLSIGN_LEN);
     if (!allowedCallsigns)
     {
-        fprintf(stderr, "Error while allocating memory!") ;
+        fprintf(stderr, "Error while allocating memory!");
         return;
     }
 
     FILE *fptr = fopen(CALLSIGN_FILE, "r");
     if (!fptr)
     {
-        fprintf(stderr, "Error while opening file: %s", CALLSIGN_FILE) ;
+        fprintf(stderr, "Error while opening file: %s", CALLSIGN_FILE);
         free(allowedCallsigns);
         return;
     }
