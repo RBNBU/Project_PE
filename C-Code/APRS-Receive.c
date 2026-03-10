@@ -16,9 +16,7 @@ Code in function of Practice Enterprise ICT.
 /*-------------------------------------------------------------------------------*/
 
 // Define constants
-// RTL SDR constants
-#define APRS_FREQ 144800000 // 144,800MHz (European APRS Frequency)
-#define SDR_SAMPLE_RATE 2048000 // 2.048MSPS (Good for APRS)
+// Callsign file
 #define CALLSIGN_FILE "./Callsigns.txt" // File with all allowed callsigns ex. "ON3RBU;ON0CALL"
 
 
