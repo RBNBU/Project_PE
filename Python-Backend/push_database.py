@@ -25,17 +25,18 @@ API_KEY = api_key
 MQTT_BROKER = "localhost"
 MQTT_TOPIC = "aprs/packets"
 
-
 # --- FUNCTIONS ---
 
-
 # This function runs when the script connects to the MQTT broker
+# ---------------------------------------------------------------
 def on_connect(client, userdata, flags, rc):
 
     print(f"Connected to broker {MQTT_TOPIC} .")
     client.subscribe(MQTT_TOPIC)
 
-# This runs every time a new MQTT message arrives 
+
+# This function runs every time a new MQTT message arrives 
+# ---------------------------------------------------------------
 def on_message(client, userdata, msg):
     
     try:
@@ -100,7 +101,9 @@ def on_message(client, userdata, msg):
     except:
         print(f"Error: processing message. ")
 
+
 # This function gets weather data from OpenWeather API 
+# ---------------------------------------------------------------
 def get_weather(lat, lon):
     
     try:
@@ -111,19 +114,18 @@ def get_weather(lat, lon):
         if response.status_code == 200:
             return response.json()
         
-
         # If the API returns an error
         else:
             print("Weather API error (Wrong status code)")
             return {}
 
-       
     except:
         print(f"Error: requesting API.")
         return {}
 
 
-# This function Connects to MariaDB and saves the data 
+# This function Connects to MariaDB and saves the data
+# ---------------------------------------------------------------
 def push_to_db(data_tuple):
     
     try:
@@ -148,7 +150,6 @@ def push_to_db(data_tuple):
         conn.close()
         print(f"Successfully pushed to Database.")
     
-
     except:
         print(f"Error: MariaDB Database.")
 
