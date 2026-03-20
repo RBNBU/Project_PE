@@ -23,7 +23,7 @@ DB_CONFIG = {
 
 API_KEY = api_key
 MQTT_BROKER = "localhost"
-MQTT_TOPIC = "aprs/packets"
+MQTT_TOPIC = "RTL_SDR/FILTERED/APRS"
 
 # --- FUNCTIONS ---
 

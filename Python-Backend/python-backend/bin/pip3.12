@@ -1,4 +1,4 @@
-#!/home/vm2/Code/Python-Backend/Project_PE/Python-Backend/python-backend/bin/python3
+#!/home/vm2/Code/Python-Backend/Project_PE/Python-Backend/python-backend/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
