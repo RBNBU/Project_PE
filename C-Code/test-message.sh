@@ -1,0 +1,2 @@
+#!/bin/bash
+mosquitto_pub -t RTL_SDR/RAW/APRS -m '{"source": "ON3RBU", "destination": "UPUWV8", "path": ["ON7DE*", "ON0ANT-10*", "WIDE2*"], "raw": "AAA0AAAEAC70609E9C6E8EA4406E9E9C6E888A40E09E9C60829CA8F4AE92888A6440E103F06079563E6C203C5B2F22344B7D4F4E3747522F50", "fix": true, "lat": 50.961333333333336, "lon": 3.9723333333333333, "comment": "0", "altitude": 52, "speed": 0.0, "course": 32, "device": null, "type": "Mic-E", "symbol": {"symbol": "[", "table": "/", "index": 58, "tableindex": 14}, "mode": "APRS", "freq": 144800000}'

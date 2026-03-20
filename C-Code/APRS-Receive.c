@@ -78,7 +78,7 @@ int main()
     */
     if(!mosq)
     {
-        fprintf(stderr, "Error while creating MQTT instance");
+        fprintf(stderr, "Error while creating MQTT instance\n");
         return -1;
     }
 
@@ -89,7 +89,7 @@ int main()
     // Connect to MQTT broker
     if (mosquitto_connect(mosq, MQTT_SUB, MQTT_SUB_PORT, 60) != MOSQ_ERR_SUCCESS)
     {
-        fprintf(stderr, "Error while connecting to MQTT Broker!");
+        fprintf(stderr, "Error while connecting to MQTT Broker!\n");
         return -1;
     }
 
@@ -121,14 +121,14 @@ void loadCallsigns()
     allowedCallsigns = calloc(MAX_CALLSIGNS, sizeof(char) * CALLSIGN_LEN);
     if (!allowedCallsigns)
     {
-        fprintf(stderr, "Error while allocating memory!");
+        fprintf(stderr, "Error while allocating memory!\n");
         return;
     }
 
     FILE *fptr = fopen(CALLSIGN_FILE, "r");
     if (!fptr)
     {
-        fprintf(stderr, "Error while opening file: %s", CALLSIGN_FILE);
+        fprintf(stderr, "Error while opening file: %s\n", CALLSIGN_FILE);
         free(allowedCallsigns);
         return;
     }
@@ -213,7 +213,7 @@ message: pointer to MQTT message
     json = cJSON_Parse((char*)p_message->payload); // Parse mqtt message
     if(json == NULL)
     {
-        fprintf(stderr, "Error while parsing JSON!");
+        fprintf(stderr, "Error while parsing JSON!\n");
         return;
     }
     
