@@ -1,23 +1,25 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Car Radio Monitor</title>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="./style/index.css">
-  <link rel="icon" type="image/x-icon" href="./img/marc.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/reset.css" rel="stylesheet">
+    <link href="css/style_index.css" rel="stylesheet">
+    <title>Car Radio Monitor</title>
 </head>
 <body>
-  <h1>Car Radio Monitor</h1>
-  <hr/>
-  <h2>Project Overview</h2>
-  <p>Our project focuses on creating a robust Vehicle Tracking & Monitoring System designed for environments where data integrity and continuity are critical. By simulating a radio connection from a moving vehicle (Jeep) using the APRS protocol, we ensure reliable tracking even in extreme conditions.</p>
-  <h2>The Team</h2>
-  <p>This project was developed by:</p>
-  <ul>
-  <li><b>Ruben Buelens: </b>Specialized in C-receiver code, transmitter setup, API development, and backup management</li>
-  <li><b>Jasper Artoos: </b>Focused on network infrastructure, database management, web development, and GitHub maintenance.</li>
-</ul>
-  <img src="./img/jeep.png" alt="jeep" class="jeep_img">
- <p class="test">qmsldkfjmqlksdjfmqklsjdfmklqsjdmfklqjsmdklf </p>
+    <div class="container">
+        <h1>Car Radio Monitor</h1>
+
+        <div id="curData_Container">
+            Fetching data...
+        </div>
+
+        <div id="map_Container">
+            
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
