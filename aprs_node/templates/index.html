@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tactical APRS</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="top-bar">
+            <div class="brand">
+                <span class="callsign-badge">ON3RBU-9</span>
+                <h1>Tactical Feed</h1>
+            </div>
+            
+            <a href="https://carradio-monitor.com" target="_blank" class="monitor-link">
+                Launch CarRadio Monitor ↗
+            </a>
+
+            <div class="status-pill">
+                <div class="pulse-dot"></div>
+                <span>LIVE RX</span>
+            </div>
+        </header>
+        
+        <main id="log-container">
+            <div id="log">
+                <div class="empty-state">Waiting for radio traffic...</div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
