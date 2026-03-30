@@ -1,100 +1,128 @@
-const API_URL = 'https://carradio-monitor.com/api/current_aprs'; //API URL, defined in Python-Backend
+// The new API URL
+const API_URL = 'https://carradio-monitor.com/api/current_aprs';
 
-let lastUpdateTimestamp = null;
+let map;
+let marker;
+let routeLine;
+let firstLoad = true;
 
-// variables for map
-let map = null;
-let car_marker = null;
-let route_line = null;
+/**
+ * Converts degrees (0-360) to compass point abbreviations
+ */
+function getCompassPoint(graden) {
+    if (graden === undefined || graden === null || graden === "") return "-";
+    const streken = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N'];
+    const index = Math.round(graden / 45) % 8;
+    return streken[index];
+}
 
-async function getCurData()
-{
-    const curData_Container = document.getElementById('curData_Container');
+/**
+ * Initializes the OpenStreetMap using Leaflet
+ */
+function initMap() {
+    map = L.map('map').setView([0, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
-    try
-    {
+    marker = L.marker([0, 0]).addTo(map);
+    routeLine = L.polyline([], { color: '#38bdf8', weight: 5 }).addTo(map);
+}
+
+function setupUI() {
+    const toggleBtn = document.getElementById('toggle-stats');
+    const panel = document.getElementById('stats-panel');
+    
+    toggleBtn.addEventListener('click', () => {
+        panel.classList.toggle('collapsed');
+        // Tell leaflet the container size changed
+        setTimeout(() => map.invalidateSize(), 400);
+    });
+}
+
+/**
+ * Fetches data from the API and fills the HTML fields
+ */
+async function updateDashboard() {
+    try {
+        console.log("Fetching data from:", API_URL);
         const response = await fetch(API_URL);
 
-        if (!response.ok)
-        {
-            throw new Error(`HTTP error: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status}`);
         }
 
-        const allCurData = await response.json();
-        const latestData = allCurData[0]; //get newest data
+        const data = await response.json();
 
-        if (latestData.Timestamp != lastUpdateTimestamp)
-        {
-            lastUpdateTimestamp = latestData.Timestamp; //update last update
+        // Check if we have usable data (usually an array)
+        if (!data || (Array.isArray(data) && data.length === 0)) {
+            console.warn("API returned no data.");
+            return;
+        }
 
-            console.log("New data recorded!. Checked at: " + new Date().toLocaleTimeString());
+        // If the API sends an array, we take the first object.
+        // If it's directly an object, we use 'data'.
+        const d = Array.isArray(data) ? data[0] : data;
 
-            // grouping the data and adding units
-            curData_Container.innerHTML = `
-            <h3>Vehicle & Status</h3>
-            <ul>
-                <li><strong>Callsign:</strong> ${latestData.Callsign}</li>
-                <li><strong>Timestamp:</strong> ${latestData.Timestamp}</li>
-                <li><strong>Alarm Status:</strong> ${latestData.Alarm_Status}</li>
-            </ul>
-            
-            <h3>Location & Movement</h3>
-            <ul>
-                <li><strong>Coordinates:</strong> ${latestData.Latitude}, ${latestData.Longitude}</li>
-                <li><strong>Altitude:</strong> ${latestData.Altitude} m</li>
-                <li><strong>Speed:</strong> ${latestData.Speed} km/h</li>
-                <li><strong>Course:</strong> ${latestData.Course_Degree}°</li>
-            </ul>
+        // --- FILL DATA ---
+        // Use .toFixed(4) only if it's a number to avoid errors
+        document.getElementById('lat').innerText = d.Latitude ? parseFloat(d.Latitude).toFixed(4) : "-";
+        document.getElementById('lon').innerText = d.Longitude ? parseFloat(d.Longitude).toFixed(4) : "-";
+        document.getElementById('alt').innerText = d.Altitude ? d.Altitude + "m" : "-";
+        
+        document.getElementById('speed').innerText = d.Speed ?? "0";
+        document.getElementById('course-deg').innerText = d.Course_Degree ?? "-";
+        document.getElementById('course-text').innerText = getCompassPoint(d.Course_Degree);
+        
+        document.getElementById('temp').innerText = d.Temperature ?? "-";
+        document.getElementById('hum').innerText = (d.Humidity ?? "-") + "%";
+        document.getElementById('clouds').innerText = (d.Clouds ?? "-") + "%";
+        document.getElementById('wind').innerText = (d.Wind_Speed ?? "-") + " m/s";
+        document.getElementById('rain').innerText = (d.Precipitation ?? "0") + " mm";
 
-            <h3>Weather & Environment</h3>
-            <ul>
-                <li><strong>Temperature:</strong> ${latestData.Temperature}°C</li>
-                <li><strong>Humidity:</strong> ${latestData.Humidity}%</li>
-                <li><strong>Wind Speed:</strong> ${latestData.Wind_Speed} m/s</li>
-                <li><strong>Cloud Cover:</strong> ${latestData.Clouds}%</li>
-                <li><strong>Precipitation:</strong> ${latestData.Precipitation} mm</li>
-            </ul>
-            `;
-
-            // draw map
-            const curLat = latestData.Latitude;
-            const curLang = latestData.Longitude;
-
-            //reverse to draw oldest to newest
-            const route_coordinates = allCurData.map(row => [row.Latitude, row.Longitude]).reverse();
-
-            if (!map) //if map does not exist
-            {
-                map = L.map('map_Container').setView([curLat, curLang], 15); //center on first coordinates
-
-                //fetch openstreetmap
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '© OpenStreetMap'
-                }).addTo(map);
-
-                car_marker = L.marker([curLat, curLang]).addTo(map);
-                route_line = L.polyline(route_coordinates, {color: 'red', weight: 4}).addTo(map);
-            }
-            else //if map already exists
-            {
-                route_line.setLatLngs(route_coordinates);
-                car_marker.setLatLng([curLat, curLang]);
-                map.panTo([curLat, curLang]);
+        // --- MAP UPDATE ---
+        if (Array.isArray(data)) {
+            const coords = data.map(item => [item.Latitude, item.Longitude]);
+            if (coords.length > 0) {
+                marker.setLatLng(coords[0]);
+                routeLine.setLatLngs(coords);
+                if (firstLoad) {
+                    map.setView(coords[0], 15);
+                    firstLoad = false;
+                }
             }
         }
-        else
-        {
-            console.log("No new data recorded. Checked at: " + new Date().toLocaleTimeString());
+        
+        // Header info
+        document.getElementById('callsign').innerText = d.Callsign || "---";
+        document.getElementById('time').innerText = d.Timestamp || "---";
+
+        // --- ALARM LOGIC ---
+        const alarmCard = document.getElementById('alarm-card');
+        const alarmText = document.getElementById('alarm-text');
+        
+        // Check if Alarm_Status exists and is not equal to 0
+        if (d.Alarm_Status && d.Alarm_Status !== 0 && d.Alarm_Status !== "0") {
+            alarmText.innerText = "ALARM ACTIVE";
+            alarmCard.classList.add('alarm-active');
+        } else {
+            alarmText.innerText = "System OK";
+            alarmCard.classList.remove('alarm-active');
         }
-    }
-    catch (error)
-    {
-        console.error('Failed to fetch API data!\n', error);
-        curData_Container.innerHTML = `<p class="error">Error while fetching data from API!</p>`;
+
+    } catch (error) {
+        console.error("Error fetching APRS data:", error);
+        // Optional: show an error message in the UI
+        const alarmText = document.getElementById('alarm-text');
+        if (alarmText) alarmText.innerText = "API ERROR";
     }
 }
 
-getCurData(); //run function
-
-setInterval(getCurData, 5000); //check for updates every 5 seconds
+// Start the update when the page is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initMap();
+    setupUI();
+    updateDashboard();
+    // Update every 5 seconds
+    setInterval(updateDashboard, 5000);
+});
