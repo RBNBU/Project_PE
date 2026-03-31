@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-import subprocess, threading, aprslib, time
+import subprocess, threading, aprslib, time, os
 
 app = Flask(__name__)
 received_packets = []
@@ -14,8 +14,22 @@ def handle_send():
     send_aprs_message(data.get('target', 'APRS'), data.get('message', ''))
     return jsonify({"status": "sent"})
 
+# --- NEW ROUTE: TELLS TRACKER.PY TO SEND A LOCATION BEACON ---
+@app.route('/beacon', methods=['POST'])
+def handle_beacon():
+    data = request.json
+    comment = data.get('comment')
+    if comment in ['0', '1']:
+        try:
+            # Create a dummy file in the Pi's RAM
+            with open(f'/tmp/aprs_trigger_{comment}', 'w') as f:
+                f.write('trigger')
+            return jsonify({"status": "beacon queued"})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    return jsonify({"error": "Invalid comment"}), 400
+
 def listen_to_ax25():
-    # 'stdbuf -oL' forces Linux to stream the data instantly
     process = subprocess.Popen(['stdbuf', '-oL', 'axlisten', '-a'], stdout=subprocess.PIPE, universal_newlines=True)
     current_sender = ""
     current_dest = ""
@@ -23,7 +37,6 @@ def listen_to_ax25():
     for line in process.stdout:
         line = line.strip()
         
-        # Catch header line
         if line.startswith("radio: fm"):
             parts = line.split()
             try:
@@ -32,13 +45,11 @@ def listen_to_ax25():
             except: 
                 pass
                 
-        # Catch payload line after header line
         elif current_sender and line and not line.startswith("radio:"):
             tnc2_packet = f"{current_sender}>{current_dest}:{line}"
             try:
                 parsed = aprslib.parse(tnc2_packet)
                 
-                # Format exactly how script.js expects it
                 formatted_packet = {
                     'callsign': parsed.get('from', 'UNKNOWN'),
                     'lat': parsed.get('latitude', 'N/A'),
@@ -54,10 +65,8 @@ def listen_to_ax25():
             except Exception:
                 pass
                 
-            # Reset next packet
             current_sender = ""
 
-# Matches the frontend fetch request!
 @app.route('/api/data')
 def get_packets(): 
     return jsonify(received_packets)
