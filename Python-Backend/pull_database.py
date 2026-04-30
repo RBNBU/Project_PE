@@ -59,6 +59,23 @@ def get_now():
         if conn and conn.is_connected():
             conn.close()
 
+@app.route('/api/history')
+def get_history():
+    conn = None
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        query = "SELECT * FROM daily_statistics ORDER BY Date DESC"
+        cursor.execute(query)
+        data = cursor.fetchall()
+        cursor.close()
+        return jsonify(data) if data else (jsonify({"error": "No history found"}), 404)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if conn and conn.is_connected(): conn.close()
+
+
 if __name__ == '__main__':
     
     # Start API on localhost port 5000

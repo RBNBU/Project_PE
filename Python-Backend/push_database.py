@@ -12,6 +12,8 @@ db_user = os.environ.get('DB_USER')
 db_pass = os.environ.get('DB_PASS')
 db_name = os.environ.get('DB_NAME')
 api_key = os.environ.get('OWM_API_KEY')
+chat_id = os.environ.get('CHAT_ID')
+bot_token = os.environ.get('BOT_TOKEN')
 
 # --- CONFIGURATION ---
 DB_CONFIG = {
@@ -51,9 +53,10 @@ def on_message(client, userdata, msg):
         lon      = data.get("lon")
         message  = data.get("comment") 
         altitude = data.get("altitude")
-        speed    = data.get("speed")
-        course   = data.get("course")
+        speed    = data.get("speed",0)
+        course   = data.get("course",0)
 
+    
         # Get Weather data using coordinates
         weather_data = get_weather(lat, lon)
         
@@ -67,15 +70,78 @@ def on_message(client, userdata, msg):
         rain_data     = weather_data.get('rain', {})
         precipitation = rain_data.get('1h', 0) 
 
-        # Show data in the terminal for checking
-        print("-" * 15)
-        print(f"Station: {callsign} | Msg: {message}")
-        print(f"Location: {lat:.4f}, {lon:.4f} | Alt: {altitude}m")
-        print(f"Weather: Temp: {temperature}°C | Humidity: {humidity}%")
-        print("-" * 15)
-
         # Create a UTC Timestamp (No summer/winter time issues)
+
         timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+
+        # Show data in the terminal for debugging purposes
+        print("\n" + "="*30)
+        print("DATA TO BE PUSHED:")
+        print(f"Callsign:      {callsign}")
+        print(f"Timestamp:     {timestamp}")
+        print(f"Message/Alarm: {message}")
+        print(f"Latitude:      {lat}")
+        print(f"Longitude:     {lon}")
+        print(f"Altitude:      {altitude}")
+        print(f"Speed:         {speed}")
+        print(f"Course:        {course}")
+        print(f"Temperature:   {temperature}°C")
+        print(f"Precipitation: {precipitation}mm")
+        print(f"Clouds:        {clouds}%")
+        print(f"Wind Speed:    {wind_speed} m/s")
+        print(f"Humidity:      {humidity}%")
+        print("="*30 + "\n")
+
+        # Send messages to mobile phone if message equals 1 (alarm)
+        if message == '1':
+            allert_message = "⚠️ CAR ALARM STATUS ON ⚠️"
+            url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+            payload = {
+                'chat_id': chat_id,
+                'text': allert_message
+                }
+            
+            response = requests.post(url, json=payload)
+            print(response.json())
+        
+        # Send message to mobile phone if there is rain detected
+        if precipitation > 5:
+            allert_message = "🌧️ HIGH AMOUNT OF RAIN DETECTED 🌧️"
+            url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+            payload = {
+                'chat_id': chat_id,
+                'text': allert_message
+                }
+            
+            response = requests.post(url, json=payload)
+            print(response.json())
+        
+        # Send message to mobile phone if the windspeed is high
+        if wind_speed > 13:
+            allert_message = "💨 STRONG WIND DETECTED 💨"
+            url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+            payload = {
+                'chat_id': chat_id,
+                'text': allert_message
+                }
+            
+            response = requests.post(url, json=payload)
+            print(response.json())
+        
+        # Send message to mobile phone if the temperature is below 0
+        if temperature < 0:
+            allert_message = "❄️ IT IS FREEZING ❄️"
+            url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+            payload = {
+                'chat_id': chat_id,
+                'text': allert_message
+                }
+            
+            response = requests.post(url, json=payload)
+            print(response.json())
+
+
+
 
         # Organize data for the Database
         data_to_push = (
@@ -98,8 +164,8 @@ def on_message(client, userdata, msg):
         push_to_db(data_to_push)
 
 
-    except:
-        print(f"Error: processing message. ")
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 # This function gets weather data from OpenWeather API 
@@ -119,8 +185,8 @@ def get_weather(lat, lon):
             print("Weather API error (Wrong status code)")
             return {}
 
-    except:
-        print(f"Error: requesting API.")
+    except Exception as e:
+        print(f"Error: requesting API. {e}")
         return {}
 
 
@@ -150,8 +216,8 @@ def push_to_db(data_tuple):
         conn.close()
         print(f"Successfully pushed to Database.")
     
-    except:
-        print(f"Error: MariaDB Database.")
+    except Exception as e:
+        print(f"Error: MariaDB Database. {e}")
 
 
 
