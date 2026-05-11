@@ -1,0 +1,165 @@
+/* 1. Layout Container - Ensures everything fits on one screen */
+.about-container {
+    max-width: 1400px;
+    margin: 10px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 20px;
+    /* Forces the layout to be exactly the height of the screen minus header */
+    height: calc(100vh - 130px); 
+    box-sizing: border-box;
+}
+
+/* 2. Left Column - Stacks info and slider */
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+    min-height: 0; /* Critical for inner scroll/flex behavior */
+}
+
+.about-card {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Keeps the text section as small as its content */
+.about-card.main-info {
+    flex-shrink: 0; 
+}
+
+.about-card p {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.card-title {
+    color: #3b82f6;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* 3. Project Gallery - The "Fotobox" */
+.slider-card {
+    flex: 1; /* Grows to take all remaining vertical space */
+    min-height: 0; /* Prevents card from pushing page height */
+}
+
+.slider-container {
+    position: relative;
+    flex: 1; 
+    overflow: hidden;
+    border-radius: 8px;
+    background: #0f172a; 
+    border: 1px solid #334155;
+}
+
+.slider {
+    display: flex;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slider img {
+    width: 100%;
+    height: 100%;
+    /* 'cover' makes the photo fit the box perfectly without distortion */
+    object-fit: cover; 
+    object-position: center;
+    flex-shrink: 0;
+}
+
+/* 4. Slider Buttons */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(4px);
+    color: #3b82f6;
+    border: 1px solid #334155;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.slider-btn:hover {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.prev { left: 10px; }
+.next { right: 10px; }
+
+/* 5. Right Column - How It Works */
+.how-it-works-card {
+    height: 100%;
+    min-height: 0;
+}
+
+.steps-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    overflow-y: auto; /* Scrollable list if text is long */
+    padding-right: 8px;
+}
+
+/* Custom Scrollbar for Steps */
+.steps-grid::-webkit-scrollbar { width: 5px; }
+.steps-grid::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
+}
+
+.tech-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-left: 3px solid #3b82f6;
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 0 8px 8px 0;
+}
+
+.step-number {
+    background: #3b82f6;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* 6. Responsive Mobile Mode */
+@media (max-width: 992px) {
+    .about-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+    }
+    
+    .slider-card {
+        height: 400px; /* Fixed height for mobile so it doesn't disappear */
+    }
+}

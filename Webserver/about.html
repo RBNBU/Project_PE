@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About us</title>
-    <link rel="stylesheet" href="/style/reset.css">
-    <link rel="stylesheet" href="/style/style.css">
+    <title>About Us - CarRadio Monitor</title>
+    <link rel="icon" type="image/png" href="img/title.png">
+    <link rel="stylesheet" href="style/reset.css">
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/about.css">
 </head>
 <body>
     <header>
@@ -21,7 +23,89 @@
         </nav>
     </header>
 
-    <main class="container">
+    <main class="about-container">
+        <div class="left-column">
+            <div class="card about-card main-info">
+                <h3 class="card-title">Detailed Project Overview</h3>
+                <p><strong>CarRadio Monitor</strong> is an advanced engineering project that merges traditional Amateur Radio (APRS) protocols with modern geospatial web technologies. By capturing digital packets transmitted over VHF frequencies, we transform raw radio telemetry into an interactive, real-time tracking experience.</p>
+                <p>This system is designed to provide high-reliability monitoring of vehicle dynamics including velocity, altitude, and precise positioning while simultaneously integrating live atmospheric data. It serves as a proof-of-concept for bridging hardware-level C programming with cloud-based data visualization.</p>
+                
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #1e293b;">
+                    <p style="margin-bottom: 2px;">Created by <strong>Jasper Artoos & Ruben Buelens</strong></p>
+                    <p style="font-size: 0.8rem; opacity: 0.8;">Systems Services & Security | Thomas More</p>
+                </div>
+            </div>
+
+            <div class="card about-card slider-card">
+                <h3 class="card-title">Project Gallery</h3>
+                <div class="slider-container">
+                    <div id="slider" class="slider">
+                        <img src="./img/img1.jpg" alt="Image 1">
+                        <img src="./img/img2.jpg" alt="Image 2">
+                        <img src="./img/img3.jpg" alt="Image 3">
+                    </div>
+                    <button class="slider-btn prev" onclick="moveSlider(-1)">&#10094;</button>
+                    <button class="slider-btn next" onclick="moveSlider(1)">&#10095;</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card about-card how-it-works-card">
+            <h3 class="card-title">How it Works</h3>
+            <div class="steps-grid">
+                <div class="tech-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>Mobile Data Acquisition</strong>
+                        <p>A Raspberry Pi 2B inside the vehicle interfaces with a GPS module to collect real-time coordinates, altitude, and velocity.</p>
+                    </div>
+                </div>
+                <div class="tech-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>APRS Transmission</strong>
+                        <p>The system encodes the gathered telemetry into standardized AX.25 APRS packets for radio transmission.</p>
+                    </div>
+                </div>
+                <div class="tech-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>RF Reception</strong>
+                        <p>A dedicated ground station equipped with a high-gain antenna monitors VHF frequencies to capture the incoming packets.</p>
+                    </div>
+                </div>
+                <div class="tech-step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>C-Based Backend Processing</strong>
+                        <p>A custom C program parses the raw radio data, filtering for our specific callsign to ensure data integrity.</p>
+                    </div>
+                </div>
+                <div class="tech-step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <strong>API Enrichment</strong>
+                        <p>The system automatically queries a Weather API using the car's current coordinates to fetch local atmospheric conditions.</p>
+                    </div>
+                </div>
+                <div class="tech-step">
+                    <div class="step-number">6</div>
+                    <div>
+                        <strong>Data Centralization</strong>
+                        <p>Processed telemetry and environmental data are pushed to a central database for live access and historical logging.</p>
+                    </div>
+                </div>
+                <div class="tech-step">
+                    <div class="step-number">7</div>
+                    <div>
+                        <strong>Web Dashboard</strong>
+                        <p>Frontend fetches database updates and visualizes real-time info.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
+
+    <script src="./js/about.js"></script>
 </body>
 </html>

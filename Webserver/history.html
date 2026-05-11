@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APRS History</title>
-    <link rel="stylesheet" href="/style/reset.css">
-    <link rel="stylesheet" href="/style/style.css">
+    <link rel="icon" type="image/png" href="img/title.png">
+    <link rel="stylesheet" href="style/reset.css">
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/history.css">
 </head>
 <body>
     <header>
@@ -21,7 +23,49 @@
         </nav>
     </header>
 
-    <main class="container">
+    <main class="history-container">
+        <div class="card controls-card">
+            <div class="control-group">
+                <label>View Type</label>
+                <select id="rangeSelect">
+                    <option value="day">Day</option>
+                    <option value="week">Week</option>
+                    <option value="month">Month</option>
+                    <option value="year">Year</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Select Date</label>
+                <input type="date" id="datePicker">
+            </div>
+            <div class="control-group">
+                <label>Metric to Display</label>
+                <select id="metricSelect">
+                    <option value="Max_Speed">Max Speed</option>
+                    <option value="Average_Speed">Average Speed</option>
+                    <option value="Max_Temp">Max Temperature</option>
+                    <option value="Average_Temp">Average Temperature</option>
+                    <option value="Min_Temp">Min Temperature</option>
+                    <option value="Max_Altitude">Max Altitude</option>
+                    <option value="Min_Altitude">Min Altitude</option>
+                    <option value="Alarm_Count">Alarm Count</option>
+                    <option value="Beacon_Count">Beacon Count</option>
+                    <option value="Total_Precipitation">Precipitation</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card chart-card">
+            <h3 class="card-title" id="chartTitle">Historical Telemetry</h3>
+            <div class="chart-container">
+                <div id="loading" class="loading-overlay">Loading data...</div>
+                <canvas id="historyChart"></canvas>
+                <div id="statsDisplay" class="stats-display" style="display: none;"></div>
+            </div>
+        </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./js/history.js"></script>
 </body>
 </html>
